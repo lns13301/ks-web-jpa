@@ -31,6 +31,7 @@ public class Course {
     public void setLesson(Lesson lesson) {
         this.lesson = lesson;
         this.lesson.getCourses().add(this);
+        this.lesson.setQuota(this.lesson.getQuota() - 1);
     }
 
     public static Course createCourse(Student student, Lesson... lessons) {

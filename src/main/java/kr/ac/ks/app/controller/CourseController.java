@@ -42,6 +42,11 @@ public class CourseController {
                                ) {
         Student student = studentRepository.findById(studentId).get();
         Lesson lesson = lessonRepository.findById(lessonId).get();
+
+        if (lesson.getQuota() < 1) {
+            return  "redirect:/courses";
+        }
+
         Course course = Course.createCourse(student,lesson);
         Course savedCourse = courseRepository.save(course);
         return "redirect:/courses";
