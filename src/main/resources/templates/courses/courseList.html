@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<body>
+
+<div class="container">
+    <div th:replace="fragments/homeButton :: homeButton"/>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>학생명</th>
+            <th>수업명</th>
+            <th>인원</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}">
+            <td th:text="${course.id}"></td>
+            <td th:text="${course.student.name}"></td>
+            <td th:text="${course.lesson.name}"></td>
+            <td th:text="${course.lesson.quota}"></td>
+            <td>
+                <a href="#" class="btn btn-primary" role="button">수정</a>
+            </td>
+            <td>
+                <a href="#" class="btn btn-primary" role="button">삭제</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>
