@@ -9,10 +9,13 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class StudentForm {
+    private Long id;
+
     @NotEmpty(message = "이름은 필수입니다.")
     private String name;
 
     @NotEmpty(message = "이메일은 필수입니다.")
     @Email(message = "이메일 형식을 확인해주세요")
     private String email;
+
 }

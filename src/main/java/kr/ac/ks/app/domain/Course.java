@@ -40,4 +40,10 @@ public class Course {
         Arrays.stream(lessons).forEach(course::setLesson);
         return course;
     }
+
+    public void deleteCourse() {
+        this.student.getCourses().remove(this);
+        this.lesson.setQuota(this.lesson.getQuota() + 1);
+        this.lesson.getCourses().remove(this);
+    }
 }

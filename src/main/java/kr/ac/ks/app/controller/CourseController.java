@@ -9,6 +9,7 @@ import kr.ac.ks.app.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -59,4 +60,15 @@ public class CourseController {
         return "courses/courseList";
     }
 
+    @GetMapping("/courses/delete/{id}")
+    public String deleteCourse(@PathVariable Long id, Model model) {
+        Course course = courseRepository.findById(id).get();
+
+        course.deleteCourse();
+        courseRepository.delete(course);
+
+        List<Course> courses = courseRepository.findAll();
+        model.addAttribute("courses", courses);
+        return "redirect:/courses";
+    }
 }

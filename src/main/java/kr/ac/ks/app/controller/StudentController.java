@@ -1,23 +1,28 @@
 package kr.ac.ks.app.controller;
 
+import kr.ac.ks.app.domain.Course;
 import kr.ac.ks.app.domain.Student;
+import kr.ac.ks.app.repository.CourseRepository;
 import kr.ac.ks.app.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class StudentController {
 
     private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
 
-    public StudentController(StudentRepository studentRepository) {
+    public StudentController(StudentRepository studentRepository, CourseRepository courseRepository) {
         this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
     }
 
     @GetMapping("/students/new")
@@ -44,5 +49,40 @@ public class StudentController {
         List<Student> students = studentRepository.findAll();
         model.addAttribute("students", students);
         return "students/studentList";
+    }
+
+    @GetMapping("/students/updatePage/{id}")
+    public String updateStudentPage(@PathVariable Long id, Model model) {
+        Student student = studentRepository.findById(id).get();
+
+        model.addAttribute("studentForm", student);
+        return "students/studentUpdateForm";
+    }
+
+    @PostMapping("/students/update/{id}")
+    public String updateStudent(@PathVariable Long id, @Valid StudentForm studentForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "students/studentUpdateForm";
+        }
+
+        Student student = studentRepository.findById(id).get();
+        student.setName(studentForm.getName());
+        student.setEmail(studentForm.getEmail());
+        return "redirect:/students";
+    }
+
+    @GetMapping("/students/delete/{id}")
+    public String deleteStudent(@PathVariable("id") Long id, Model model) {
+        Student student = studentRepository.findById(id).get();
+
+        List<Course> courses = courseRepository.findAll();
+        List<Course> collect = courses.stream().filter(x -> x.getStudent() == student).collect(Collectors.toList());
+        collect.stream().forEach(x -> x.deleteCourse());
+        collect.stream().forEach(x -> courseRepository.delete(x));
+
+        studentRepository.delete(student);
+        List<Student> students = studentRepository.findAll();
+        model.addAttribute("students", students);
+        return "redirect:/students";
     }
 }
