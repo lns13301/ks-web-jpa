@@ -51,23 +51,23 @@ public class StudentController {
         return "students/studentList";
     }
 
-    @GetMapping("/students/updatePage/{id}")
-    public String updateStudentPage(@PathVariable Long id, Model model) {
+    @GetMapping("/students/update/{id}")
+        public String updateStudentPage(@PathVariable Long id, Model model) {
         Student student = studentRepository.findById(id).get();
 
         model.addAttribute("studentForm", student);
         return "students/studentUpdateForm";
     }
 
-    @PostMapping("/students/update/{id}")
+    @PostMapping("/students/update/edit/{id}")
     public String updateStudent(@PathVariable Long id, @Valid StudentForm studentForm, BindingResult result) {
         if (result.hasErrors()) {
             return "students/studentUpdateForm";
         }
 
         Student student = studentRepository.findById(id).get();
-        student.setName(studentForm.getName());
-        student.setEmail(studentForm.getEmail());
+        student.update(studentForm);
+        studentRepository.save(student);
         return "redirect:/students";
     }
 
@@ -77,8 +77,8 @@ public class StudentController {
 
         List<Course> courses = courseRepository.findAll();
         List<Course> collect = courses.stream().filter(x -> x.getStudent() == student).collect(Collectors.toList());
-        collect.stream().forEach(x -> x.deleteCourse());
-        collect.stream().forEach(x -> courseRepository.delete(x));
+        collect.forEach(Course::deleteCourse);
+        collect.forEach(courseRepository::delete);
 
         studentRepository.delete(student);
         List<Student> students = studentRepository.findAll();

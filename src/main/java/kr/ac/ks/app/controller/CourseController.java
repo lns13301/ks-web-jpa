@@ -8,11 +8,13 @@ import kr.ac.ks.app.repository.LessonRepository;
 import kr.ac.ks.app.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public class CourseController {
         }
 
         Course course = Course.createCourse(student,lesson);
-        Course savedCourse = courseRepository.save(course);
+        courseRepository.save(course);
         return "redirect:/courses";
     }
 
@@ -58,6 +60,35 @@ public class CourseController {
         List<Course> courses = courseRepository.findAll();
         model.addAttribute("courses", courses);
         return "courses/courseList";
+    }
+
+    @GetMapping("/courses/update/{id}")
+    public String updateLessonPage(@PathVariable Long id, Model model) {
+        Course course = courseRepository.findById(id).get();
+
+        model.addAttribute("course", course);
+        model.addAttribute("students", studentRepository.findAll());
+        model.addAttribute("lessons", lessonRepository.findAll());
+
+        return "courses/courseUpdateForm";
+    }
+
+    @PostMapping("/courses/update/edit/{id}")
+    public String updateLesson(@PathVariable Long id,
+                               @RequestParam("studentId") Long studentId,
+                               @RequestParam("lessonId") Long lessonId) {
+
+        Course course = courseRepository.findById(id).get();
+        Student student = studentRepository.findById(studentId).get();
+        Lesson lesson = lessonRepository.findById(lessonId).get();
+
+        if (lesson.getQuota() < 1) {
+            return  "redirect:/courses";
+        }
+
+        course.update(student, lesson);
+        courseRepository.save(course);
+        return "redirect:/courses";
     }
 
     @GetMapping("/courses/delete/{id}")

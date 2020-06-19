@@ -11,8 +11,7 @@
 
 <div class="container">
     <div th:replace="fragments/homeButton :: homeButton"/>
-    <form role="form" action="/students/update" th:object="${studentForm}"
-          method="post">
+    <form role="form" th:action="'edit/' + *{id} + ''" th:object="${studentForm}" method="post">
         <div class="form-group">
             <label th:for="name">이름</label>
             <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
@@ -25,8 +24,7 @@
                    th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'">
             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Incorrect date</p>
         </div>
-            <button th:each="student : ${student}" th:onclick="'location.href = \'/students/update/' + ${student.id} + '\''" type="submit" class="btn btn-primary">수정</button>
-<!--        <button type="submit" class="btn btn-primary">Submit</button>-->
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br/>
     <div th:replace="fragments/footer :: footer"/>

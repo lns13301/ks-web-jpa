@@ -1,5 +1,6 @@
 package kr.ac.ks.app.domain;
 
+import kr.ac.ks.app.controller.LessonForm;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -39,6 +40,15 @@ public class Course {
         course.setStudent(student);
         Arrays.stream(lessons).forEach(course::setLesson);
         return course;
+    }
+
+    public void update(Student student, Lesson... lessons) {
+        this.student.getCourses().remove(this);
+        setStudent(student);
+
+        this.lesson.setQuota(this.lesson.getQuota() + 1);
+        this.lesson.getCourses().remove(this);
+        Arrays.stream(lessons).forEach(this::setLesson);
     }
 
     public void deleteCourse() {

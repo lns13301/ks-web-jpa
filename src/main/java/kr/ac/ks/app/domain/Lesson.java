@@ -1,5 +1,6 @@
 package kr.ac.ks.app.domain;
 
+import kr.ac.ks.app.controller.LessonForm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,10 @@ public class Lesson {
     public Lesson(String name, int quota) {
         this.name = name;
         this.quota = quota;
+    }
+
+    public void update(LessonForm lessonForm) {
+        setName(lessonForm.getName());
+        setQuota(lessonForm.getQuota());
     }
 }

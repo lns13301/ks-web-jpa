@@ -1,5 +1,6 @@
 package kr.ac.ks.app.domain;
 
+import kr.ac.ks.app.controller.StudentForm;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -30,5 +31,10 @@ public class Student {
     public Student(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public void update(StudentForm studentForm) {
+        setName(studentForm.getName());
+        setEmail(studentForm.getEmail());
     }
 }

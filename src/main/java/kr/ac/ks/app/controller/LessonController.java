@@ -2,15 +2,16 @@ package kr.ac.ks.app.controller;
 
 import kr.ac.ks.app.domain.Course;
 import kr.ac.ks.app.domain.Lesson;
-import kr.ac.ks.app.domain.Student;
 import kr.ac.ks.app.repository.CourseRepository;
 import kr.ac.ks.app.repository.LessonRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,14 +48,33 @@ public class LessonController {
         return "lessons/lessonList";
     }
 
+    @GetMapping("/lessons/update/{id}")
+    public String updateLessonPage(@PathVariable Long id, Model model) {
+        Lesson lesson = lessonRepository.findById(id).get();
+
+        model.addAttribute("lessonForm", lesson);
+        return "lessons/lessonUpdateForm";
+    }
+
+    @PostMapping("/lessons/update/edit/{id}")
+    public String updateLesson(@PathVariable Long id, @Valid LessonForm lessonForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "lessons/lessonUpdateForm";
+        }
+        Lesson lesson = lessonRepository.findById(id).get();
+        lesson.update(lessonForm);
+        lessonRepository.save(lesson);
+        return "redirect:/lessons";
+    }
+
     @GetMapping("/lessons/delete/{id}")
     public String deleteLesson(@PathVariable("id") Long id, Model model) {
         Lesson lesson = lessonRepository.findById(id).get();
 
         List<Course> courses = courseRepository.findAll();
         List<Course> collect = courses.stream().filter(x -> x.getLesson() == lesson).collect(Collectors.toList());
-        collect.stream().forEach(x -> x.deleteCourse());
-        collect.stream().forEach(x -> courseRepository.delete(x));
+        collect.forEach(Course::deleteCourse);
+        collect.forEach(courseRepository::delete);
 
         lessonRepository.delete(lesson);
         List<Lesson> lessons = lessonRepository.findAll();

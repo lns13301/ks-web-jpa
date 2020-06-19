@@ -11,8 +11,7 @@
 
 <div class="container">
     <div th:replace="fragments/homeButton :: homeButton"/>
-    <form role="form" action="/students/new" th:object="${studentForm}"
-          method="post">
+    <form role="form" action="/students/new" th:object="${studentForm}" method="post">
         <div class="form-group">
             <label th:for="name">이름</label>
             <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
