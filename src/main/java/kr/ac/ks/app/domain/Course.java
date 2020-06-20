@@ -26,12 +26,12 @@ public class Course {
 
     public void setStudent(Student student) {
         this.student = student;
-        this.student.getCourses().add(this);
+        //this.student.getCourses().add(this);
     }
 
     public void setLesson(Lesson lesson) {
         this.lesson = lesson;
-        this.lesson.getCourses().add(this);
+        //this.lesson.getCourses().add(this);
         this.lesson.setQuota(this.lesson.getQuota() - 1);
     }
 
@@ -43,12 +43,14 @@ public class Course {
     }
 
     public void update(Student student, Lesson... lessons) {
-        this.student.getCourses().remove(this);
-        setStudent(student);
-
         this.lesson.setQuota(this.lesson.getQuota() + 1);
-        this.lesson.getCourses().remove(this);
+
+        this.student = student;
         Arrays.stream(lessons).forEach(this::setLesson);
+        /*this.student.getCourses().remove(this);
+        setStudent(student);
+        this.lesson.getCourses().remove(this);
+        Arrays.stream(lessons).forEach(this::setLesson);*/
     }
 
     public void deleteCourse() {
