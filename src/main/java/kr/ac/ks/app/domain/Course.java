@@ -1,14 +1,10 @@
 package kr.ac.ks.app.domain;
 
-import kr.ac.ks.app.controller.LessonForm;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,6 +14,7 @@ public class Course {
     @GeneratedValue
     private Long id;
 
+    @JoinColumn(name = "student_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Student student;
 
@@ -25,13 +22,27 @@ public class Course {
     private Lesson lesson;
 
     public void setStudent(Student student) {
+        if (this.student != null){
+            this.student.getCourses().remove(this);
+        }
+
         this.student = student;
-        //this.student.getCourses().add(this);
+
+        if (student != null) {
+            this.student.getCourses().add(this);
+        }
     }
 
     public void setLesson(Lesson lesson) {
+        if (this.lesson != null){
+            this.lesson.getCourses().remove(this);
+        }
+
         this.lesson = lesson;
-        //this.lesson.getCourses().add(this);
+
+        if (student != null) {
+            this.lesson.getCourses().add(this);
+        }
         this.lesson.setQuota(this.lesson.getQuota() - 1);
     }
 
@@ -43,19 +54,17 @@ public class Course {
     }
 
     public void update(Student student, Lesson... lessons) {
-        this.lesson.setQuota(this.lesson.getQuota() + 1);
-
-        this.student = student;
-        Arrays.stream(lessons).forEach(this::setLesson);
-        /*this.student.getCourses().remove(this);
+        this.student.getCourses().remove(this);
         setStudent(student);
+        this.lesson.setQuota(this.lesson.getQuota() + 1);
         this.lesson.getCourses().remove(this);
-        Arrays.stream(lessons).forEach(this::setLesson);*/
+        Arrays.stream(lessons).forEach(this::setLesson);
     }
 
     public void deleteCourse() {
         this.student.getCourses().remove(this);
         this.lesson.setQuota(this.lesson.getQuota() + 1);
         this.lesson.getCourses().remove(this);
+        //courseRepository.delete(this);
     }
 }

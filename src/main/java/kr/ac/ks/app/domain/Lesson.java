@@ -20,7 +20,7 @@ public class Lesson {
     private String name;
     private int quota;
 
-    @OneToMany
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.MERGE)
     private List<Course> courses = new ArrayList<>();
 
     public Lesson() {

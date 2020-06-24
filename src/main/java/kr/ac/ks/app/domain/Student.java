@@ -3,10 +3,7 @@ package kr.ac.ks.app.domain;
 import kr.ac.ks.app.controller.StudentForm;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class Student {
     private String name;
     private String email;
 
-    @OneToMany
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Course> courses = new ArrayList<>();
 
     public Student() {
